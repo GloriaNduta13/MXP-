@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit this template
+-->
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <h:head>
+        <title><ui:insert name="title">MXP</ui:insert></title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <h:outputStylesheet name="primefaces-theme.css" library="primefaces" />
+        <h:outputStylesheet name="mission.css" library="css" />
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </h:head>
+
+    <h:body styleClass="#{fn:contains(themeBean.currentTheme, 'dark') ? 'dark-mode' : 'light-mode'}">
+
+        <h:outputText value="Theme: #{themeBean.currentTheme}"
+                      style="position:fixed;bottom:0;left:0;color:red;" />
+
+        <p:sidebar widgetVar="sidebarMenu"
+                   position="left"
+                   styleClass="custom-sidebar"
+                   baseZIndex="10000">
+
+            <h:form>
+                <center>
+                    <h:graphicImage value="/images/mxp-logo.png" style="width: 120px; margin-bottom: 1rem;" />
+                    <h:outputText value="#{LoginBean.username}" style="font-weight: bold;" />
+                </center>
+
+                <p:separator />
+
+                <p:menu styleClass="ui-menu-sm">
+                    <p:menuitem value="Dashboard" outcome="Dashboard" icon="pi pi-home" />
+                    <p:menuitem value="Employees" outcome="Employee" icon="pi pi-users" />
+                    <p:menuitem value="Expenses" outcome="Expenses" icon="pi pi-wallet" />
+                    <p:menuitem value="Training" outcome="Training" icon="pi pi-sliders-h" />
+                    <p:menuitem value="Newsletter" outcome="Newsletter" icon="pi pi-envelope" />
+                    <p:menuitem value="Reports" outcome="Reports?faces-redirect=true" icon="pi pi-chart-line" />
+                    <p:menuitem value="Helpdesk" outcome="HelpDesk" icon="pi pi-question-circle" />
+
+                    <p:divider />
+
+                    <p:menuitem value="Toggle Theme"
+                                action="#{themeBean.toggleTheme}"
+                                immediate="true"
+                                ajax="false"
+                                icon="#{fn:contains(themeBean.currentTheme, 'dark') ? 'pi pi-sun' : 'pi pi-moon'}"
+                                onclick="setTimeout(() => location.reload(), 100)" />
+
+                    <p:menuitem value="Logout"
+                                action="#{LoginBean.logout}"
+                                icon="pi pi-sign-out"
+                                styleClass="ui-button-danger" />
+                </p:menu>
+            </h:form>
+        </p:sidebar>
+
+        <div class="main-content" style="padding: 2rem;">
+            <p:commandButton icon="pi pi-bars"
+                             onclick="PF('sidebarMenu').show()"
+                             styleClass="ui-button-flat ui-button-secondary"
+                             style="margin-bottom: 1rem;"
+                             title="Menu" />
+            <ui:insert name="content" />
+        </div>
+
+        <script type="text/javascript">
+            let currentChartInstance = null;
+            function renderReportChart(rawJson) {
+            console.log("📦 Chart.js rendering function triggered. Injected rawJson:", rawJson);
+            const canvas = document.getElementById("reportChart");
+            const chartContainer = document.getElementById("chartCanvasContainer");
+            const noDataMessage = document.getElementById("noDataMessage");
+            if (!canvas) {
+            console.warn("Canvas element with ID 'reportChart' not found. Chart cannot be rendered.");
+            if (chartContainer) chartContainer.style.display = 'none';
+            if (noDataMessage) noDataMessage.style.display = 'block';
+            return;
+            }
+
+
+            if (currentChartInstance) {
+            console.log("Destroying existing chart instance...");
+            currentChartInstance.destroy();
+            currentChartInstance = null;
+            }
+
+            try {
+            if (rawJson &amp;&amp; rawJson.trim().startsWith('{')) {
+            const config = JSON.parse(rawJson);
+            currentChartInstance = new Chart(canvas, config);
+            if (chartContainer) chartContainer.style.display = 'block';
+            if (noDataMessage) noDataMessage.style.display = 'none';
+            console.log("✅ Chart successfully rendered.");
+            } else {
+            console.warn("⚠️ Chart JSON is invalid or empty. Chart not rendered.");
+            if (chartContainer) chartContainer.style.display = 'none';
+            if (noDataMessage) noDataMessage.style.display = 'block';
+            }
+            } catch (err) {
+            console.error("❌ Error parsing chart config or initializing Chart.js:", err);
+            if (chartContainer) chartContainer.style.display = 'none';
+            if (noDataMessage) noDataMessage.style.display = 'block';
+            }
+            }
+
+
+            function renderReportFromPrimeFacesAjax() {
+            console.log("👉 renderReportFromPrimeFacesAjax triggered.");
+            const jsonOutputElement = document.getElementById('reportForm:chartJsonOutput');
+            let rawJson = null;
+            if (jsonOutputElement) {
+            rawJson = jsonOutputElement.textContent.trim();
+            console.log("Extracted rawJson directly from DOM element (reportForm:chartJsonOutput):", rawJson);
+            } else {
+            console.error("❌ Critical: reportForm:chartJsonOutput element not found in the DOM after AJAX update!");
+            }
+
+            renderReportChart(rawJson);
+            }
+
+
+            function downloadChartAsImage(canvasId, fileName) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) {
+            alert("Chart is not rendered yet.");
+            return;
+            }
+            const image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+            const link = document.createElement("a");
+            link.download = fileName + ".png";
+            link.href = image;
+            link.click();
+            }
+
+            async function downloadChartAsPDF(canvasId, fileName) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) {
+            alert("Chart is not rendered yet.");
+            return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const imageData = canvas.toDataURL("image/jpeg", 1.0);
+            const pdf = new jsPDF({
+            orientation: "landscape",
+                    unit: "pt",
+                    format: [canvas.width, canvas.height]
+            });
+            pdf.addImage(imageData, "JPEG", 0, 0, canvas.width, canvas.height);
+            pdf.save(fileName + ".pdf");
+            }
+
+        </script>
+
+        <script type="text/javascript">
+            let staffChartInstance = null;
+            function renderStaffChartJS() {
+            const canvas = document.getElementById("staffPerformanceChart");
+            const container = document.getElementById("staffChartContainer");
+            const message = document.getElementById("staffNoDataMsg");
+            const jsonElement = document.getElementById("staffChartForm:staffChartJsonOutput");
+            if (!canvas || !jsonElement) {
+            container.style.display = "none";
+            message.style.display = "block";
+            return;
+            }
+
+            if (staffChartInstance) {
+            staffChartInstance.destroy();
+            staffChartInstance = null;
+            }
+
+            const rawJson = jsonElement.textContent.trim();
+            if (!rawJson || !rawJson.startsWith("{")) {
+            container.style.display = "none";
+            message.style.display = "block";
+            return;
+            }
+
+            try {
+            const config = JSON.parse(rawJson);
+            staffChartInstance = new Chart(canvas, config);
+            container.style.display = "block";
+            message.style.display = "none";
+            } catch (e) {
+            console.error("Error rendering staff chart:", e);
+            container.style.display = "none";
+            message.style.display = "block";
+            }
+            }
+        </script>
+
+
+    </h:body>
+</ui:composition>

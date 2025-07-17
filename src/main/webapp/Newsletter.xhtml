@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit this template
+-->
+<ui:composition template="/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:c="jakarta.tags.core">
+
+    <ui:define name="title">Newsletter</ui:define>
+
+    <ui:define name="content">
+        <h2>MXP Newsletter Center</h2>
+
+        <ui:fragment rendered="#{LoginBean.role eq 'editor'}">
+            <p:panel header="Upload New Newsletter">
+                <h:form enctype="multipart/form-data">
+                    <p:fileUpload listener="#{newsletterView.handleUpload}"
+                                  mode="advanced"
+                                  auto="true"
+                                  update="newsletterGrid"
+                                  label="Upload PDF"
+                                  multiple="false"
+                                  accept=".pdf" />
+                    <p:fileUpload listener="#{newsletterView.handleCoverUpload}"
+                                  mode="advanced"
+                                  auto="true"
+                                  label="Upload Cover Image"
+                                  accept=".jpg,.jpeg,.png"
+                                  update="newsletterGrid" />
+
+                </h:form>
+
+                <h:form>
+                    <p:inputText value="#{newsletterView.searchKeyword}" placeholder="Search newsletters..." />
+                    <p:commandButton value="Search" action="#{newsletterView.search}" update="newsletterGrid" icon="pi pi-search" />
+                </h:form>
+
+
+            </p:panel>
+        </ui:fragment>
+
+        <p:separator />
+
+
+        <h:panelGroup id="newsletterGrid">
+            <ui:fragment rendered="#{not empty newsletterView.newsletters}">        
+                <div class="featured-banner" onclick="document.getElementById('newsletter#{newsletterView.newsletters[0].id}').scrollIntoView({ behavior: 'smooth' })">
+                    <span class="new-badge">NEW</span>
+                    <img src="#{request.contextPath}/covers/#{newsletterView.newsletters[0].coverImage}" class="featured-cover"/>
+                    <div class="featured-meta">
+                        <h2>#{newsletterView.newsletters[0].title}</h2>
+                        <small>Uploaded: #{newsletterView.newsletters[0].uploadedAt}</small>
+                    </div>
+                </div>               
+            </ui:fragment>
+
+
+            <div class="newsletter-grid">
+                <ui:repeat value="#{newsletterView.newsletters}" var="n">
+                    <div id="newsletter#{n.id}" class="newsletter-card" onclick="window.open('#{request.contextPath}/pdfs/#{n.filename}', '_blank')">
+                        <img src="#{request.contextPath}/covers/#{n.coverImage}" class="newsletter-cover" />
+                        <div class="newsletter-meta">
+                            <h3>#{n.title}</h3>
+                            <small>Uploaded: #{n.uploadedAt}</small>
+
+                            <ui:fragment rendered="#{LoginBean.role eq 'editor'}">
+                                <p:commandButton value="🗑️ Delete"
+                                                 action="#{newsletterView.deleteNewsletter(n.id)}"
+                                                 update="newsletterGrid"
+                                                 class="ui-button-warning rounded-button"/>
+                            </ui:fragment>
+                        </div>
+                    </div>
+                </ui:repeat>
+
+
+
+                <ui:fragment rendered="#{empty newsletterView.newsletters}">
+                    <div class="no-newsletter">
+                        <p>No newsletters found. Try refining your search 🔍</p>
+                    </div>
+                </ui:fragment>
+            </div>
+        </h:panelGroup>
+
+    </ui:define>
+
+</ui:composition>

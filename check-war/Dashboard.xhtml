@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit this template
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">     
+    <h:head>
+        <title>Dashboard</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <h:outputStylesheet library="primefaces-#{themeBean.currentTheme}" name="theme.css" />
+
+    </h:head>
+    <h:body>
+        <h1>Welcome, #{LoginBean.username}!</h1>
+        <div class="card">
+            <h:form>
+                <p:growl id="messages" showDetail="true" />
+
+                <p:menubar hideDelay="1000">
+                    <f:facet name="start">
+                        <p:graphicImage name="images/primefaces-logo.svg" library="showcase" />
+                    </f:facet>
+                    <p:submenu label="File" icon="pi pi-fw pi-file">
+                        <p:submenu label="New" icon="pi pi-fw pi-plus">
+                            <p:menuitem value="Bookmark" icon="pi pi-fw pi-bookmark"/>
+                            <p:menuitem value="Video" icon="pi pi-fw pi-video"/>
+                        </p:submenu>
+                        <p:menuitem value="Delete" icon="pi pi-fw pi-trash"/>
+                        <p:divider />
+                        <p:menuitem value="Export" icon="pi pi-fw pi-external-link"/>
+                        <p:menuitem value="Duplicate" icon="pi pi-fw pi-copy" disabled="true"/>
+                    </p:submenu>
+
+                    <p:submenu label="Edit" icon="pi pi-fw pi-pencil">
+                        <p:menuitem value="Left" icon="pi pi-fw pi-align-left"/>
+                        <p:menuitem value="Right" icon="pi pi-fw pi-align-right"/>
+                        <p:menuitem value="Center" icon="pi pi-fw pi-align-center"/>
+                        <p:menuitem value="Justify" icon="pi pi-fw pi-align-justify"/>
+                    </p:submenu>
+
+                    <p:submenu label="Users" icon="pi pi-fw pi-user">
+                        <p:menuitem value="New" icon="pi pi-fw pi-user-plus"/>
+                        <p:menuitem value="Delete" icon="pi pi-fw pi-user-minus"/>
+                        <p:submenu label="Search" icon="pi pi-fw pi-users">
+                            <p:submenu label="Filter" icon="pi pi-fw pi-filter">
+                                <p:menuitem value="Print" icon="pi pi-fw pi-print"/>
+                            </p:submenu>
+                            <p:menuitem value="List" icon="pi pi-fw pi-bars"/>
+                        </p:submenu>
+                    </p:submenu>
+
+                    <p:submenu label="Events" icon="pi pi-fw pi-calendar">
+                        <p:submenu label="Edit" icon="pi pi-fw pi-pencil">
+                            <p:menuitem value="Save" icon="pi pi-fw pi-calendar-plus"/>
+                            <p:menuitem value="Delete" icon="pi pi-fw pi-calendar-minus"/>
+                        </p:submenu>
+                        <p:submenu label="Archieve" icon="pi pi-fw pi-calendar-times">
+                            <p:menuitem value="Remove" icon="pi pi-fw pi-calendar-minus"/>
+                        </p:submenu>
+                    </p:submenu>
+
+                    <p:divider layout="vertical"/>
+
+                    <p:menuitem value="Toggle Theme" action="#{themeBean.toggleTheme}" update="@all" icon="pi pi-moon" onclick="window.location.reload()" />
+
+
+                    <f:facet name="end">
+                        <div class="ui-input-icon-left mr-2">
+                            <i class="pi pi-fw pi-search" />
+                            <p:inputText placeholder="Search"/>
+                        </div>
+                        <p:commandButton value="Logout" action ="#{LoginBean.logout}" update="@form" icon="pi pi-fw pi-sign-out" styleClass="ui-button-info"/>
+                    </f:facet>
+                </p:menubar>
+            </h:form>
+        </div>
+        <div class="card crud-demo">
+            <h:form id="form">
+                <p:growl id="messages" showDetail="true" life="3000"/>
+                <p:toolbar> 
+                    <p:toolbarGroup> 
+                        <p:commandButton value="New" icon="pi pi-plus" actionListener="#{employeeView.openNew}" update=":dialogs:manage-employee-content" oncomplete="PF('manageEmployeeDialog').show()"
+                                         styleClass="ui-button-success" style="margin-right: .5rem">
+                            <p:resetInput target=":dialogs:manage-employee-content" />
+                        </p:commandButton>                     
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="right">
+                        <p:fileUpload mode="simple" skinSimple="true" label="Import" chooseIcon="pi pi-download" />
+                        <p:commandButton value="PDF" icon="pi pi-file-pdf" ajax="false">
+                            <p:dataExporter type="pdf" target="dt-employees" fileName="employees" />
+                        </p:commandButton>
+
+                        <p:commandButton value="Excel" icon="pi pi-file-excel" ajax="false">
+                            <p:dataExporter type="xlsx" target="dt-employees" fileName="employees" />
+                        </p:commandButton>
+
+                    </p:toolbarGroup>
+                </p:toolbar>
+                <h:outputText value="Total Employees: #{employeeView.allEmployees.size()}" />
+                <p:dataTable id="dt-employees" widgetVar="dtEmployees" var="employee" value="#{employeeView.allEmployees}" rowKey="#{employee.name}"
+                             selection="#{employeeView.selectedEmployees}" selectionMode="multiple" paginator="true" rows="5" paginatorPosition="bottom" reflow="true">
+                    <f:facet name="header">
+                        <div class="products-table-header">
+                            <span style="font-weight: bold">EMPLOYEES INVENTORY</span>
+                            <span class="filter-container ui-input-icon-left">
+                                <i class="pi pi-search"></i>
+                                <p:inputText id="globalFilter" onkeyup="PrimeFaces.debounce(() => PF('dtEmployees').filter())" placeholder="Search" />
+                            </span>
+                        </div>
+                    </f:facet>                                    
+                    <p:column headerText="Name" sortBy="#{employee.name}" filterBy="#{employee.name}">
+                        <h:outputText value="#{employee.name}" />
+                    </p:column>
+                    <p:column headerText="Age" sortBy="#{employee.age}" filterBy="#{employee.age}">
+                        <h:outputText value="#{employee.age}" />
+                    </p:column>
+                    <p:column headerText="Department" sortBy="#{employee.department}" filterBy="#{employee.department}">
+                        <h:outputText value="#{employee.department}" />
+                    </p:column>
+                    <p:column headerText="Salary" sortBy="#{employee.salary}" filterBy="#{employee.salary}">
+                        <h:outputText value="#{employee.salary}" />
+                    </p:column>
+                    <p:column headerText="Email" sortBy="#{employee.email}" filterBy="#{employee.email}">
+                        <h:outputText value="#{employee.email}" />
+                    </p:column>
+                    <p:column exportable="false" headerText="Actions">
+                        <p:commandButton icon="pi pi-pencil" update=":dialogs:manage-employee-content"
+                                         oncomplete="PF('manageEmployeeDialog').show()" styleClass="edit-button rounded-button ui-button-success"
+                                         process="@this">
+                            <f:setPropertyActionListener value="#{employee}" target="#{employeeView.selectedEmployee}" />
+                            <p:resetInput target=":dialogs:manage-employee-content" />
+                        </p:commandButton>
+                        <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash"
+                                         process="@this" oncomplete="PF('deleteEmployeeDialog').show()">
+                            <f:setPropertyActionListener value="#{employee}" target="#{employeeView.selectedEmployee}" />
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+
+            </h:form>
+
+
+            <h:form id="dialogs">
+                <p:dialog header="Employee Details" showEffect="fade" modal="true" widgetVar="manageEmployeeDialog" responsive="true">
+                    <p:outputPanel id="manage-employee-content" class="ui-fluid">
+                        <p:outputPanel rendered="#{not empty employeeView.selectedEmployee}">
+                            <div class="field">
+                                <p:outputLabel for="name">Name</p:outputLabel>
+                                <p:inputText id="name" value="#{employeeView.selectedEmployee.name}" required="true" />
+                            </div>
+                            <div class="field">
+                                <p:outputLabel for="age">Age</p:outputLabel>
+                                <p:spinner id="age" value="#{employeeView.selectedEmployee.age}" min="18" max="100" />
+                            </div>
+                            <div class="field">
+                                <p:outputLabel for="department">Department</p:outputLabel>
+                                <p:inputText id="department" value="#{employeeView.selectedEmployee.department}" />
+                            </div>
+                            <div class="field">
+                                <p:outputLabel for="salary">Salary</p:outputLabel>
+                                <p:inputNumber id="salary" value="#{employeeView.selectedEmployee.salary}" symbolPosition="s" />
+                            </div>
+                            <div class="field">
+                                <p:outputLabel for="email">Email</p:outputLabel>
+                                <p:inputText id="email" value="#{employeeView.selectedEmployee.email}" />
+                            </div>
+                        </p:outputPanel>
+                    </p:outputPanel>
+
+                    <f:facet name="footer">
+                        <p:commandButton value="Save" icon="pi pi-check" actionListener="#{employeeView.saveEmployee}" update=":dialogs:manage-employee-content :form:dt-employees :form:messages :dialogs:manage-employee-content" process="manage-employee-content @this" oncomplete="PF('manageEmployeeDialog').hide()" />
+                        <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageEmployeeDialog').hide()"
+                                         class="ui-button-secondary" type="button" />
+                    </f:facet>
+                </p:dialog>              
+
+            </h:form>
+        </div>   
+    </h:body>
+</html>

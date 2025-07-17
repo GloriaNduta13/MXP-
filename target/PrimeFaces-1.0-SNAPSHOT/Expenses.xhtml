@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit this template
+-->
+<ui:composition template="/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <ui:define name="title">Expenses</ui:define>
+
+    <ui:define name="content">
+        <h2>Expense Management</h2>
+
+        <p:panel id="expensePanel" header="Submit an Expense" >
+            <h:form>
+                <p:growl id="growl" showDetail="true" life="3000" />
+                
+                <p:inputText placeholder="Expense Title" value="#{expenseView.expense.expenseTitle}" style="width: 100%;" />
+
+                <p:calendar placeholder="Date" value="#{expenseView.expense.date}" pattern="yyyy-MM-dd"
+                            style="width: 100%; margin-top: 1rem;" type="date" />
+
+                <p:inputNumber placeholder="Amount" value="#{expenseView.expense.amount}" symbol="KSh"
+                               style="width: 100%; margin-top: 1rem;" />
+
+                <p:inputText placeholder="Employee Name" value="#{expenseView.expense.employeeName}"
+                             style="width: 100%; margin-top: 1rem;" />
+
+                <p:inputText placeholder="Department" value="#{expenseView.expense.department}"
+                             style="width: 100%; margin-top: 1rem;" />
+
+                <p:commandButton value="Submit"
+                                 action="#{expenseView.submitExpense}"
+                                 update="growl expensesTable expensePanel"
+                                 process="@form"
+                                 icon="pi pi-wallet"
+                                 style="margin-top: 1rem;"                                  
+                                 oncomplete="PF('resetWidget').reset()"/>
+
+
+
+            </h:form>
+
+        </p:panel>
+        <ui:fragment rendered="#{LoginBean.role eq 'admin'}">
+            <p:dataTable id="expensesTable" value="#{expenseView.expenses}" var="e"
+                         style="margin-top: 2rem;" rows="5" paginator="true">
+
+                <p:column headerText="Title">
+                    <h:outputText value="#{e.expenseTitle}" />
+                </p:column>
+
+                <p:column headerText="Date">
+                    <h:outputText value="#{e.date}" />
+                </p:column>
+
+                <p:column headerText="Amount">
+                    <h:outputText value="#{e.amount}" />
+                </p:column>
+
+                <p:column headerText="Employee">
+                    <h:outputText value="#{e.employeeName}" />
+                </p:column>
+
+                <p:column headerText="Department">
+                    <h:outputText value="#{e.department}" />
+                </p:column>
+            </p:dataTable>
+        </ui:fragment>
+
+    </ui:define>
+
+</ui:composition>
+

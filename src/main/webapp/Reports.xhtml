@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit this template
+-->
+<ui:composition template="/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core">
+
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{LoginBean.validateAdminAccess}" />
+    </f:metadata>
+
+    <ui:define name="title">Reports</ui:define>
+
+    <ui:define name="content">
+
+        <h2>📊 Department Expense Overview</h2>
+        <h:form id="reportForm">
+            <p:panel header="Expense Summary Report">
+                <div id="chartCanvasContainer">
+                    <canvas id="reportChart" width="100%" height="400"></canvas>
+                </div>
+                <div id="noDataMessage" style="display:none;color:gray;">No expense data found</div>
+
+                <h:outputText id="chartJsonOutput"
+                              value="#{reportBean.barModel}" escape="false"
+                              style="display:none;" />
+
+                <p:remoteCommand name="refreshChartJS"
+                                 autoRun="false"
+                                 oncomplete="renderReportFromPrimeFacesAjax();" />
+
+                <p:poll interval="60"
+                        update="chartJsonOutput"
+                        listener="#{reportBean.generateExpenseChart()}"
+                        oncomplete="refreshChartJS();" />
+
+                <p:commandButton value="Download PNG"
+                                 icon="pi pi-image"
+                                 onclick="downloadChartAsImage('reportChart', 'expense-chart')"
+                                 styleClass="ui-button-info"
+                                 type="button"
+                                 style="margin-right: .5rem;" />
+
+                <p:commandButton value="Download PDF"
+                                 icon="pi pi-file-pdf"
+                                 onclick="downloadChartAsPDF('reportChart', 'expense-report')"
+                                 styleClass="ui-button-danger"
+                                 type="button" />
+
+            </p:panel>
+        </h:form>
+
+        <h2>👥 Staff Performance Overview</h2>
+        <h:form id="staffChartForm">
+            <p:panel header="Staff Performance Report">
+                <div id="staffChartContainer">
+                    <canvas id="staffPerformanceChart" width="100%" height="400"></canvas>
+                </div>
+                <div id="staffNoDataMsg" style="display:none;color:gray;">No performance data available.</div>
+
+                <h:outputText id="staffChartJsonOutput"
+                              value="#{staffPerformanceBean.chartModel}" escape="false"
+                              style="display:none;" />
+
+                <p:remoteCommand name="refreshStaffChart"
+                                 autoRun="false"
+                                 oncomplete="renderStaffChartJS();" />
+
+                <p:poll interval="60"
+                        update="staffChartJsonOutput"
+                        listener="#{staffPerformanceBean.generateChart()}"
+                        oncomplete="refreshStaffChart();" />
+
+                <p:commandButton value="Download PNG"
+                                 icon="pi pi-image"
+                                 onclick="downloadChartAsImage('staffPerformanceChart', 'staff-performance')"
+                                 styleClass="ui-button-info"
+                                 type="button"
+                                 style="margin-right: .5rem;" />
+
+                <p:commandButton value="Download PDF"
+                                 icon="pi pi-file-pdf"
+                                 onclick="downloadChartAsPDF('staffPerformanceChart', 'staff-performance')"
+                                 styleClass="ui-button-danger"
+                                 type="button" />
+
+            </p:panel>
+        </h:form>
+
+        <h:outputScript target="body">
+            renderReportFromPrimeFacesAjax();
+            renderStaffChartJS();
+        </h:outputScript>
+
+    </ui:define>
+</ui:composition>

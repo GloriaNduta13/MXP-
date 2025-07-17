@@ -1,0 +1,27 @@
+body {
+  background-color: #ffffff;
+  color: #1a1a1a;
+  font-family: "Segoe UI", sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.ui-panel, .ui-card, .ui-datatable {
+  background-color: #f9f9f9;
+  color: #1a1a1a;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+}
+
+.ui-button {
+  background-color: #f0f0f0;
+  border-color: #ccc;
+  color: #1a1a1a;
+}
+
+.ui-button:hover {
+  background-color: #e0e0e0;
+  border-color: #bbb;
+}
+
+
+

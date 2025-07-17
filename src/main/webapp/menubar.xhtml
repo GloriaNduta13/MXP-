@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit this template
+-->
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core">
+          
+        <p:menubar hideDelay="1000">
+                    <f:facet name="start">
+                        <h:graphicImage value="/images/mxp-logo.png" style="height: 40px;" />
+                    </f:facet>
+
+
+                    <p:menuitem value="Employee Directory" outcome="Employee" icon="pi pi-users" />                
+                    <p:menuitem value="Expenses" icon="pi pi-wallet" outcome="Expenses" />
+                    <p:menuitem value="Training" icon="pi pi-sliders-h" outcome="Training" />
+                    <p:menuitem value="Newsletter" icon="pi pi-envelope" outcome="Newsletter" />
+                    <p:menuitem value="Reports" icon="pi pi-chart-line" outcome="Reports" />
+                    <p:menuitem value="Helpdesk" icon="pi pi-question-circle" outcome="HelpDesk" />
+
+                    <p:divider layout="vertical" />
+
+                    <p:menuitem value="#{themeBean.currentTheme eq 'bootstrap-blue-light' ? 'Dark Mode' : 'Light Mode'}" action="#{themeBean.toggleTheme}" icon="#{themeBean.currentTheme eq 'bootstrap-blue-light' ? 'pi pi-moon' : 'pi pi-sun'}" update="@all" onclick="window.location.reload()"/>
+
+                    <f:facet name="end">
+                        <p:commandButton value="Logout" action="#{LoginBean.logout}" icon="pi pi-sign-out" styleClass="ui-button-info" />
+                    </f:facet>
+                </p:menubar>
+
+</ui:composition>
+

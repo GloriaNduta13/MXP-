@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit this template
+-->
+<ui:composition template="/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <ui:define name="title">Dashboard</ui:define>
+
+    <ui:define name="content">
+
+        <h2 style="margin-bottom: 1rem;">Welcome, #{LoginBean.username} 🎉</h2>
+
+        <p:panel header="Your Summary" styleClass="ui-panel-primary"> 
+            <p>Hi #{LoginBean.username},</p>
+            <ul>
+                <li>You have <b>3</b> pending tasks</li> <li><b>#{trainingBean.newTrainingInvites}</b> new training invites</li>
+                <li>Last login: #{LoginBean.formattedLastLogin}</li>
+            </ul> 
+        </p:panel> 
+
+        <p:panelGrid columns="3" style="margin: 2rem 0;">
+            <p:card> 
+                <f:facet name="title">Employees</f:facet> 
+                <h:outputText value="#{staffView.totalStaff} total" /> 
+            </p:card> 
+            <p:card> 
+                <f:facet name="title">Departments</f:facet> 
+                <h:outputText value="#{staffView.departmentCount} active" />             
+            </p:card>
+            <p:card> 
+                <f:facet name="title">Expenses</f:facet>
+                <h:outputText value="KSh #{expenseView.totalExpenseAmount}" />
+            </p:card> </p:panelGrid>
+
+        <p:tabView>
+            <p:tab title="MXP Highlights"> 
+                <p:carousel value="#{dashboardView.mxpImages}" var="img" numVisible="1" circular="true" autoplayInterval="3000"> 
+                    <p:graphicImage library="images" name="company/MXP/#{img}" style="width: 100%; max-height: 400px; object-fit: contain; border-radius: 8px;" />
+                </p:carousel> 
+            </p:tab> 
+        </p:tabView> 
+
+        <p:panel header="Recent Activity" style="margin-top: 2rem;"> 
+            <ul> 
+                <li>John joined HR</li> 
+                <li>Report XYZ uploaded</li> 
+                <li>Helpdesk ticket #124 closed</li> 
+            </ul> 
+        </p:panel>
+
+        <p:panelGrid columns="3" styleClass="launchpad-grid" style="margin-top: 2rem;">
+            <ui:fragment rendered="#{LoginBean.role eq 'admin'}">
+                <p:card>
+                    <f:facet name="title">Employees</f:facet>
+                    <p:graphicImage value="/images/icons/employees.png" style="width: 100px;" />
+                    <p:commandButton value="Open" action="Employee.xhtml?faces-redirect=true" icon="pi pi-users" styleClass="ui-button-info" />
+                </p:card>
+            </ui:fragment>
+            <p:card>
+                <f:facet name="title">Training</f:facet>
+                <p:graphicImage value="/images/icons/training.png" style="width: 100px;" />
+                <p:commandButton value="Open" action="Training.xhtml?faces-redirect=true" icon="pi pi-sliders-h" styleClass="ui-button-success" />
+            </p:card>
+            <p:card>
+                <f:facet name="title">Expenses</f:facet>
+                <p:graphicImage value="/images/icons/expenses.png" style="width: 100px;" />
+                <p:commandButton value="Open" action="Expenses.xhtml?faces-redirect=true" icon="pi pi-wallet" styleClass="ui-button-warning" />
+            </p:card>
+            <ui:fragment rendered="#{LoginBean.role eq 'admin'}">
+                <p:card>
+                    <f:facet name="title">Reports</f:facet>
+                    <p:graphicImage value="/images/icons/reports.png" style="width: 100px;" />
+                    <p:commandButton value="Open" action="Reports?faces-redirect=true" icon="pi pi-chart-line" styleClass="ui-button-help" />
+                </p:card>
+            </ui:fragment>
+            <p:card>
+                <f:facet name="title">Newsletter</f:facet>
+                <p:graphicImage value="/images/icons/newsletter.png" style="width: 100px;" />
+                <p:commandButton value="Open" action="Newsletter.xhtml?faces-redirect=true" icon="pi pi-envelope" styleClass="ui-button-info" />
+            </p:card>
+            <p:card>
+                <f:facet name="title">HelpDesk</f:facet>
+                <p:graphicImage value="/images/icons/helpdesk.png" style="width: 100px;" />
+                <p:commandButton value="Open" action="HelpDesk.xhtml?faces-redirect=true" icon="pi pi-question-circle" styleClass="ui-button-success" />
+            </p:card>
+        </p:panelGrid>
+
+       
+        <p:panel header="Upcoming Events" style="margin-top: 2rem;">
+            <p:dataList value="#{eventView.upcomingEvents}" var="event">
+                <h:outputText value="#{event.title} – #{event.date}" />
+                <h:outputText value="#{trainingView.upcomingTrainings} upcoming" />
+                <h:outputText value="Latest: #{newsletterView.latestNewsletterTitle}" />
+            </p:dataList>
+
+        </p:panel>
+
+
+
+        <h:form>
+            <p:inputText id="searchBox" value="#{employeeSearch.query}" 
+                         placeholder="Search employees, departments, or FAQs..." style="width: 60%;" />
+            <p:commandButton value="Search" action="#{employeeSearch.submit}" update="results" icon="pi pi-search" />
+        </h:form>
+
+        <p:dataList id="results" value="#{employeeSearch.results}" var="item" 
+                    emptyMessage="No results found" style="margin-top: 1rem;">
+            <h:outputText value="#{item}" />
+        </p:dataList>
+
+    </ui:define>
+
+</ui:composition>

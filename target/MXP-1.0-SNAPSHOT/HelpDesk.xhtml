@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit this template
+-->
+
+<ui:composition template="/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core">
+
+    <ui:define name="title">Helpdesk</ui:define>
+
+    <ui:define name="content">
+        <h2>Help &amp; Support</h2>
+
+        <p:panel header="Submit a Support Request">
+            <h:form>
+                <p:inputText placeholder="Subject" value="#{helpdeskView.ticket.subject}" style="width: 100%;" />
+                <p:inputTextarea rows="4" autoResize="true" value="#{helpdeskView.ticket.message}"
+                                 placeholder="Describe your issue..." style="width: 100%; margin-top: 1rem;" />
+                <p:commandButton value="Submit Ticket" icon="pi pi-send"
+                                 action="#{helpdeskView.submit}"
+                                 update="@form ticketsTable"
+                                 styleClass="ui-button-warning mt-3" />
+            </h:form>
+        </p:panel>
+
+        <h3 style="margin-top: 2rem;">Submitted Tickets</h3>
+
+        <ui:fragment rendered="#{LoginBean.role eq 'admin'}">
+            <h:form id="ticketForm">
+                <p:dataTable id="ticketsTable"
+                             value="#{helpdeskView.tickets}"
+                             var="t"
+                             editable="true"
+                             editMode="cell"
+                             rowKey="#{t.id}"
+                             widgetVar="ticketsWidget"
+                             sortBy="#{t.submittedAt}"
+                             selectionMode="single"
+                             styleClass="ui-datatable-striped mt-2"
+                             emptyMessage="No tickets found">
+
+                    <p:ajax event="cellEdit" listener="#{helpdeskView.onCellEdit}" update="ticketsTable" />
+
+                    <f:facet name="header">
+                        <h:outputText value="🧾 Helpdesk Tickets — Click to edit Subject directly." />
+                    </f:facet>
+
+                   
+                    <p:column headerText="Subject" filterBy="#{t.subject}" sortBy="#{t.subject}">
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <h:outputText value="#{t.subject}" />
+                            </f:facet>
+                            <f:facet name="input">
+                                <p:inputText value="#{t.subject}" style="width:100%" label="Subject" />
+                            </f:facet>
+                        </p:cellEditor>
+                    </p:column>
+
+                    
+                    <p:column headerText="Message" sortBy="#{t.message}" filterBy="#{t.message}">
+                        <h:outputText value="#{t.message}" />
+                    </p:column>
+
+                    
+                    <p:column headerText="Submitted By" filterBy="#{t.submittedBy}" sortBy="#{t.submittedBy}">
+                        <h:outputText value="#{t.submittedBy}" />
+                    </p:column>
+
+                    
+                    <p:column headerText="Status" sortBy="#{t.status}" filterMatchMode="exact">
+                        <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('ticketsWidget').filter()" styleClass="custom-filter">
+                                <f:selectItem itemLabel="All" itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItems value="#{helpdeskView.statusOptions}" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                        <span class="ticket-badge #{helpdeskView.getStatusClass(t)}">
+                            #{t.status != null ? t.status : '--'}
+                        </span>
+                    </p:column>
+
+                   
+                    <p:column headerText="Date" sortBy="#{t.submittedAt}" filterMatchMode="between">
+                        <f:facet name="filter">
+                            <p:datePicker selectionMode="range"
+                                          onchange="PF('ticketsWidget').filter()"
+                                          styleClass="custom-filter"/>
+                        </f:facet>
+                        <h:outputText value="#{t.submittedAt}">
+                            <f:convertDateTime pattern="dd MMM yyyy HH:mm" />
+                        </h:outputText>
+                    </p:column>
+
+                   
+                    <p:column headerText="Activity Level" sortBy="#{t.activity}">
+                        <p:progressBar value="#{t.activity}" displayOnly="true"
+                                       styleClass="#{helpdeskView.getActivityClass(t)}"
+                                       style="height: .5rem;" />
+                        <h:outputText value="#{t.activity}" style="margin-left: .5rem; font-size: 0.85rem;" />
+                    </p:column>
+
+                    
+                    <p:column headerText="Actions" style="text-align: center;">
+                        <p:commandButton value="✅"
+                                         action="#{helpdeskView.updateStatus(t, 'Resolved')}"
+                                         update="ticketsTable"
+                                         styleClass="ui-button-success ui-button-flat ui-button-sm" />
+                        <p:commandButton value="🛠"
+                                         action="#{helpdeskView.updateStatus(t, 'In Progress')}"
+                                         update="ticketsTable"
+                                         styleClass="ui-button-warning ui-button-flat ui-button-sm" />
+                        <p:commandButton value="❌"
+                                         action="#{helpdeskView.updateStatus(t, 'Closed')}"
+                                         update="ticketsTable"
+                                         styleClass="ui-button-danger ui-button-flat ui-button-sm" />
+                        <p:commandButton icon="pi pi-trash"
+                                         action="#{helpdeskView.deleteTicket(t)}"
+                                         update="ticketsTable"
+                                         styleClass="ui-button-danger ui-button-flat ui-button-sm" />
+                    </p:column>
+                </p:dataTable>
+
+                
+            </h:form>
+        </ui:fragment>
+    </ui:define>
+</ui:composition>

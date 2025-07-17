@@ -1,0 +1,391 @@
+/* ---------------------------------------------
+   📦 Layout & UI Structure
+---------------------------------------------- */
+.carousel-img-wrapper {
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 10px;
+}
+
+.custom-sidebar {
+    background-color: #f9fafb !important;
+    padding-top: 1rem;
+    width: 260px;
+    border-right: 2px solid #ccc;
+}
+
+.custom-sidebar .ui-menuitem-link {
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+    color: #333;
+}
+
+/* ---------------------------------------------
+   🌗 Theme Variables (Light & Dark Mode)
+---------------------------------------------- */
+body.light-mode {
+    --bg-color: #ffffff;
+    --text-color: #222222;
+    --sidebar-bg: #f9fafb;
+    --menu-hover: #eef2f5;
+}
+
+body.dark-mode {
+    --bg-color: #1e1e2f !important;
+    --text-color: #ffffff !important;
+    --sidebar-bg: #2c2c3c !important;
+    --menu-hover: #393950 !important;
+}
+
+/* ---------------------------------------------
+   🧱 Global Theme Application
+---------------------------------------------- */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+body.dark-mode,
+body.dark-mode * {
+    color: var(--text-color) !important;
+}
+
+.custom-sidebar {
+    background-color: var(--sidebar-bg) !important;
+}
+
+.custom-sidebar .ui-menuitem-link:hover {
+    background-color: var(--menu-hover);
+    transition: background 0.3s;
+}
+
+/* ---------------------------------------------
+   🌙 PrimeFaces Dark Mode Styling
+---------------------------------------------- */
+
+/* Panels */
+body.dark-mode .ui-panel {
+    background-color: #2b2b3b !important;
+    color: inherit;
+    border-color: #444 !important;
+}
+body.dark-mode .ui-panel .ui-panel-titlebar,
+body.dark-mode .ui-panel .ui-widget-header {
+    background-color: #393950 !important;
+    font-weight: 500 !important;
+}
+
+/* Inputs */
+body.dark-mode .ui-inputfield,
+body.dark-mode .ui-inputtext,
+body.dark-mode .ui-inputtextarea,
+body.dark-mode textarea {
+    background-color: #2e2e3c !important;
+    border-color: #4a4a5e !important;
+}
+
+/* Placeholders */
+body.dark-mode ::placeholder {
+    color: #bbb;
+    opacity: 0.7;
+}
+
+/* Labels */
+body.dark-mode label,
+body.dark-mode .ui-outputlabel {
+    color: #ffffff !important;
+}
+
+/* Select Menus */
+body.dark-mode .ui-selectonemenu,
+body.dark-mode .ui-selectonemenu-label {
+    background-color: #2e2e3c !important;
+    color: #ffffff !important;
+    border-color: #4a4a5e !important;
+}
+
+/* Checkboxes and radios */
+body.dark-mode .ui-selectbooleancheckbox .ui-chkbox-box,
+body.dark-mode .ui-radiobutton .ui-radiobutton-box {
+    background-color: #2c2c3c !important;
+    border-color: #666 !important;
+}
+
+/* DataTables */
+body.dark-mode .ui-datatable {
+    background-color: #1d1d2d !important;
+}
+body.dark-mode .ui-datatable tbody tr {
+    background-color: #2c2c3c !important;
+}
+body.dark-mode .ui-datatable tbody tr:hover {
+    background-color: #3a3a4d !important;
+}
+
+/* Dialogs */
+body.dark-mode .ui-dialog,
+body.dark-mode .ui-dialog-titlebar {
+    background-color: #2c2c3c !important;
+    border-color: #444 !important;
+}
+
+/* ---------------------------------------------
+   🧩 Dashboard & Card Patterns
+---------------------------------------------- */
+body.dark-mode .dashboard-card,
+body.dark-mode .card,
+body.dark-mode .info-panel,
+body.dark-mode .stat-widget,
+body.dark-mode .widget-box,
+body.dark-mode .activity-feed,
+body.dark-mode .tile {
+    background-color: #2c2c3c !important;
+    border: 1px solid #3e3e5c;
+    box-shadow: none;
+}
+
+/* Text blocks (e.g., About sections) */
+body.dark-mode .ui-panel-content,
+body.dark-mode .text-panel,
+body.dark-mode .text-block {
+    background-color: #2b2b3b !important;
+}
+
+/* Headers & Titles */
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode .section-header {
+    color: #ffffff !important;
+}
+
+/* ---------------------------------------------
+   🌬️ Transitions & Motion
+---------------------------------------------- */
+body,
+.ui-panel,
+.ui-button,
+.ui-datatable,
+.ui-inputfield,
+.ui-widget {
+    transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease;
+}
+/* Fix text color inside dashboard tiles and stats */
+body.dark-mode .dashboard-card *:not(.pi),
+body.dark-mode .widget-box *:not(.pi),
+body.dark-mode .stat-widget *:not(.pi) {
+    color: var(--text-color) !important;
+}
+
+/* Optional: icon brightness if they look dim */
+body.dark-mode .pi {
+    color: #ffffff !important;
+}
+
+/* Force panel backgrounds and content to respect dark mode */
+body.dark-mode .ui-panel,
+body.dark-mode .ui-panelGrid,
+body.dark-mode .ui-panel .ui-panel-content,
+body.dark-mode .ui-panel .ui-panel-titlebar,
+body.dark-mode .ui-widget-content,
+body.dark-mode .ui-widget-header {
+    background-color: #2b2b3b !important;
+    color: #ffffff !important;
+}
+
+.dark-mode .p-panel,
+.dark-mode .dashboard-card {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    border: 1px solid #333;
+}
+
+.dark-mode h2,
+.dark-mode .section-title {
+    color: #e2e8f0;
+    border-bottom: 1px solid #444;
+}
+
+.dark-mode input,
+.dark-mode .search-box {
+    background-color: #2e2e2e;
+    color: #ccc;
+    border: 1px solid #555;
+}
+
+.dark-mode .stat-value {
+    color: #d4d4d4;
+    background-color: #252525;
+    padding: 0.5rem;
+    border-radius: 5px;
+}
+
+.dark-mode .dashboard-card:hover {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.ticket-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    display: inline-block;
+    color: white;
+}
+
+.status-open       {
+    background-color: #007ad9;
+}
+.status-inprogress {
+    background-color: #ffc107;
+    color: black;
+}
+.status-resolved   {
+    background-color: #28a745;
+}
+.status-closed     {
+    background-color: #6c757d;
+}
+
+.high-activity    .ui-progressbar-value {
+    background-color: #dc3545;
+}
+.medium-activity  .ui-progressbar-value {
+    background-color: #f0ad4e;
+}
+.low-activity     .ui-progressbar-value {
+    background-color: #28a745;
+}
+
+
+
+
+.ticket-badge::before {
+    content: '';
+    position: absolute;
+    left: 0.4rem;
+    font-size: 1rem;
+}
+
+
+.status-open::before {
+    content: '🟢';
+}
+
+.status-resolved::before {
+    content: '✅';
+}
+
+.status-closed::before {
+    content: '❌';
+}
+
+.status-inprogress::before {
+    content: '🔄';
+}
+
+.status-empty {
+    background-color: #bbb;
+    color: #000;
+}
+
+.status-empty::before {
+    content: '⬜';
+}
+
+.featured-meta h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.featured-meta small {
+    font-size: 0.95rem;
+    color: #666;
+}
+
+.featured-banner {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    background: linear-gradient(to right, #f9f9f9, #fff);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+    cursor: pointer;
+}
+
+.featured-cover {
+    width: 320px;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.featured-meta h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.newsletter-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    padding: 2rem;
+    max-width: 1400px;
+    margin: auto;
+}
+
+.newsletter-card {
+    position: relative;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    text-align: center;
+    padding: 1rem;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.newsletter-card:hover {
+    transform: scale(1.03);
+}
+
+.newsletter-cover {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.featured-banner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    background: linear-gradient(to right, #f9f9f9, #fff);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+    cursor: pointer;
+}
+
+.new-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: crimson;
+    color: white;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.75rem;
+    border-radius: 6px;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    z-index: 1;
+}

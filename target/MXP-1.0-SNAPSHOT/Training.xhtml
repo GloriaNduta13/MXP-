@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit this template
+-->
+<ui:composition template="/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core">
+
+    <ui:define name="title">Training</ui:define>
+
+    <ui:define name="content">
+        <h2>Training Sessions</h2>
+
+        
+        <p:growl id="growl" showDetail="true" life="3000" />
+
+       
+        <h:form id="filterForm" prependId="false">
+            <h:panelGrid columns="3">
+                <p:selectOneMenu value="#{trainingBean.selectedDepartment}">
+                    <f:selectItem itemLabel="All" itemValue="" />
+                    <f:selectItem itemLabel="ICT Support" itemValue="ICT Support" />
+                    <f:selectItem itemLabel="Sales" itemValue="Sales" />
+                    <f:selectItem itemLabel="DevOps" itemValue="DevOps" />
+                    <f:selectItem itemLabel="Accounts" itemValue="Accounts" />
+                </p:selectOneMenu>
+
+                <p:calendar value="#{trainingBean.startDate}" />
+                <p:calendar value="#{trainingBean.endDate}" />
+
+                <p:commandButton value="Filter"
+                                 action="#{trainingBean.filterSessions}"
+                                 update="trainingList growl"
+                                 icon="pi pi-filter"
+                                 process="@form"
+                                 immediate="false"/>
+            </h:panelGrid>
+        </h:form>
+
+        
+        <h:form id="enrollmentForm" prependId="false">
+            <p:dataList id="trainingList"
+                        value="#{trainingBean.availableSessions}"
+                        var="ts"
+                        type="unordered"
+                        emptyMessage="No training sessions available">
+
+                <b>📘 #{ts.title}</b><br/>
+                Date: #{ts.date} | Department: #{ts.department}
+                <br/><br/>
+
+                <p:commandButton value="Enroll"
+                                 action="#{trainingBean.enroll(ts)}"
+                                 update="growl trainingList myEnrollmentsPanel"
+                                 process="@this"
+                                 icon="pi pi-check-circle"
+                                 styleClass="ui-button-success ui-button-sm" />
+
+                <hr/>
+            </p:dataList>
+
+            <p:panel id="myEnrollmentsPanel" header="My Enrollments" style="margin-top:2rem;">
+                <ui:repeat value="#{trainingBean.mySessions}" var="s">
+                    <p>✅ #{s.title} — #{s.date}</p>
+                </ui:repeat>
+            </p:panel>
+        </h:form>
+
+        
+        <ui:fragment rendered="#{LoginBean.role eq 'admin'}">
+            <h:form id="createSessionForm" prependId="false">
+                <p:panel header="Create Training Session" style="margin-top:2rem;" id="createSessionPanel">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel for="title" value="Title" />
+                        <p:inputText id="title" value="#{trainingBean.newSession.title}" required="true"/>
+
+                        <h:outputLabel for="date" value="Date" />
+                        <p:calendar id="date" value="#{trainingBean.newSession.date}" required="true"/>
+
+                        <h:outputLabel for="dept" value="Department" />
+                        <p:selectOneMenu id="dept" value="#{trainingBean.newSession.department}" required="true">
+                            <f:selectItem itemLabel="-- Select --" itemValue="" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="ICT Support" itemValue="ICT Support" />
+                            <f:selectItem itemLabel="Sales" itemValue="Sales" />
+                            <f:selectItem itemLabel="DevOps" itemValue="DevOps" />
+                            <f:selectItem itemLabel="Accounts" itemValue="Accounts" />
+                        </p:selectOneMenu>
+
+                        <p:commandButton value="Create Session"
+                                         action="#{trainingBean.createSession}"
+                                         update="trainingList growl createSessionPanel"
+                                         process="@form"
+                                         resetValues="true"
+                                         icon="pi pi-plus-circle"
+                                         style="margin-top:1rem;" />
+                    </h:panelGrid>
+                </p:panel>
+            </h:form>
+        </ui:fragment>
+
+    </ui:define>
+</ui:composition>
